@@ -96,6 +96,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
     //Walljumping variables
     private float wallSlideTimer, wallJumpTimer;
+    public float wallJumpMultiplier = 1;
     public bool wallSlideLeft, wallSlideRight;
 
     private int _starCombo;
@@ -1935,7 +1936,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
                 hitRight = false;
                 hitLeft = false;
-                body.velocity = new Vector2(WALLJUMP_HSPEED * (wallSlideLeft ? 1 : -1), WALLJUMP_VSPEED);
+                body.velocity = new Vector2(WALLJUMP_HSPEED * (wallSlideLeft ? 1 : -1) * wallJumpMultiplier, WALLJUMP_VSPEED * wallJumpMultiplier);
                 singlejump = false;
                 doublejump = false;
                 triplejump = false;
@@ -1953,7 +1954,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             }
         } else {
             //walljump starting check
-            bool canWallslide = !inShell && body.velocity.y < -0.1 && !groundpound && !onGround && !holding && state != Enums.PowerupState.MegaMushroom && !flying && !drill && !crouching && !sliding && !knockback;
+            bool canWallslide = !inShell && body.velocity.y < -0.1 && !groundpound && !onGround && !holding && state != Enums.PowerupState.MegaMushroom && !flying && !drill && !crouching && !sliding && !knockback && wallJumpMultiplier > 0;
             if (!canWallslide)
                 return;
 
@@ -2125,7 +2126,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             if (wallJumpTimer < (14 / 60f) && (hitLeft || hitRight)) {
                 wallJumpTimer = 0;
             } else {
-                body.velocity = new(WALLJUMP_HSPEED * (facingRight ? 1 : -1), body.velocity.y);
+                body.velocity = new(WALLJUMP_HSPEED * (facingRight ? 1 : -1) * wallJumpMultiplier, body.velocity.y);
                 return;
             }
         }

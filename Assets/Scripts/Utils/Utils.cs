@@ -411,6 +411,7 @@ namespace NSMB.Utils {
 
             bool big = gm.spawnBigPowerups;
             bool vertical = gm.spawnVerticalPowerups;
+            float gravmult = gm.gravityMultiplier;
 
             float totalChance = 0;
             foreach (Powerup powerup in powerups) {

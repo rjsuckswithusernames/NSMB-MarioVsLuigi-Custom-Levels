@@ -35,11 +35,12 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
 
     public int levelMinTileX, levelMinTileY, levelWidthTile, levelHeightTile;
     public float cameraMinY, cameraHeightY, cameraMinX = -1000, cameraMaxX = 1000;
+    public float gravityMultiplier = 1.0f, jumpModifier = 0.0f;
     public bool loopingLevel = true;
     public Vector3 spawnpoint;
     public Tilemap tilemap;
     [ColorUsage(false)] public Color levelUIColor = new(24, 178, 170);
-    public bool spawnBigPowerups = true, spawnVerticalPowerups = true;
+    public bool spawnBigPowerups = true, spawnVerticalPowerups = true, allowWallJumping = true;
     public string levelDesigner = "", richPresenceId = "", levelName = "Unknown";
     private TileBase[] originalTiles;
     private BoundsInt origin;
@@ -510,13 +511,21 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
         }
 
         started = true;
-
+        
         playerCount = players.Count;
         foreach (PlayerController controllers in players)
             if (controllers) {
                 if (spectating && controllers.sfx) {
                     controllers.sfxBrick.enabled = true;
                     controllers.sfx.enabled = true;
+                }
+                else if (!spectating) {
+                    controllers.jumpVelocity += jumpModifier;
+                    controllers.normalGravity *= gravityMultiplier;
+                    controllers.terminalVelocity *= gravityMultiplier;
+                    if (!allowWallJumping) {
+                        controllers.wallJumpMultiplier = 0;
+                    }
                 }
                 controllers.gameObject.SetActive(spectating);
             }
